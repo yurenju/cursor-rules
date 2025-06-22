@@ -1,0 +1,266 @@
+---
+description: writing or updating git commit message
+globs:
+alwaysApply: false
+---
+
+# Git Commit Rules
+
+This document outlines the complete workflow and message format specifications for AI-performed Git commits.
+
+## Git Workflow (AI Usage)
+
+Before committing, follow these steps:
+
+1. **Check Status**: View current file changes
+
+   ```bash
+   git status
+   ```
+
+2. **Review Differences**: Confirm specific change content
+
+   ```bash
+   git --no-pager diff
+   ```
+
+3. **View History** (if needed): Check previous commit records
+
+   ```bash
+   # Default: view last 5 commits
+   git --no-pager log --oneline -5
+
+   # Or adjust number as needed
+   git --no-pager log --oneline -3
+   ```
+
+4. **Analyze Changes and Suggest Commit Strategy**: Based on the degree of file changes, decide whether to split into multiple commits
+
+   **Analysis Criteria**:
+
+   - **Single commit**: If changes belong to the same logical function or modification scope
+   - **Multiple commits**: If changes involve multiple different functions, file types, or modification purposes
+
+   **Situations requiring multiple commits**:
+
+   - Simultaneously modified API and frontend components
+   - Contains both new features and bug fixes (different types of changes)
+   - Modified code in multiple different modules
+   - Simultaneously performing feature addition and code refactoring
+   - Contains both documentation updates and program logic modifications
+
+   **AI Behavior**:
+
+   - If suggesting multiple commits, must:
+     1. List suggested commit groupings
+     2. Provide suggested message format for each commit
+     3. List files that should be included in each commit
+     4. **Stop execution**, wait for user confirmation or adjustment suggestions
+   - If judged as single commit, continue with subsequent steps
+
+   **Suggestion Format Example**:
+
+   ```
+   Suggested split into 2 commits:
+
+   Commit 1: Add user authentication API
+   - Files: services/auth/auth.api.ts, services/auth/auth.types.ts
+   - Message: feat(auth): add user authentication API
+
+   Commit 2: Update project configuration
+   - Files: package.json, tsconfig.json
+   - Message: chore: update TypeScript configuration
+
+   Please confirm whether to proceed with this suggestion, or tell me your adjustments.
+   ```
+
+5. **Add Files**: Add files to be committed to the staging area
+
+   ```bash
+   # Add specific files
+   git add filename
+
+   # Or add all changed files (only when confirmed as single commit)
+   git add .
+   ```
+
+6. **Confirm Again**: Check staging area content
+
+   ```bash
+   git status
+   ```
+
+7. **Commit Changes**: Use Conventional Commits format for committing
+   ```bash
+   git commit -m "type(scope): description"
+   ```
+
+### Complete Example Workflow
+
+#### Single Commit Workflow
+
+```bash
+# 1. Check status
+git status
+
+# 2. Review changes
+git --no-pager diff
+
+# 3. View history (if needed)
+git --no-pager log --oneline -5
+
+# 4. Analyze changes (AI judges as single commit)
+
+# 5. Add files
+git add services/auth/auth.api.ts
+
+# 6. Confirm staging area
+git status
+
+# 7. Commit
+git commit -m "feat(auth): add user authentication API"
+
+# 8. Confirm commit success (optional)
+git status
+```
+
+#### Multiple Commits Workflow
+
+```bash
+# 1-4. Same as above, AI analyzes and suggests multiple commits then stops waiting for confirmation
+
+# After user confirmation, execute first commit:
+git add services/auth/auth.api.ts services/auth/auth.types.ts
+git status
+git commit -m "feat(auth): add user authentication API"
+
+# Execute second commit:
+git add package.json tsconfig.json
+git status
+git commit -m "chore: update TypeScript configuration"
+
+# Confirm all commits successful
+git status
+```
+
+## Commit Message Format Specifications
+
+### Conventional Commits Format Structure
+
+```
+type(scope): description
+```
+
+### Detailed Description
+
+#### Type
+
+- **feat**: New feature
+- **fix**: Bug fix
+- **docs**: Documentation update
+- **style**: Code formatting changes (no functional impact)
+- **refactor**: Code refactoring (no new features or bug fixes)
+- **test**: Add or modify tests
+- **chore**: Build tools, auxiliary tools, or dependency updates
+- **perf**: Performance improvements
+- **ci**: CI/CD related changes
+- **build**: Build system or external dependency changes
+
+#### Scope (Optional)
+
+- Indicates the scope or module affected by the change
+- Examples: auth, api, ui, database, config
+- Can be omitted if affecting multiple scopes
+
+#### Description
+
+- Use present tense verbs, concisely describe the change content
+- Start with lowercase, no period at the end
+- Recommended length within 50 characters
+
+### Commit Message Examples
+
+#### Feature Development
+
+```
+feat(auth): add user authentication API
+feat(ui): implement login form validation
+feat: add password reset functionality
+```
+
+#### Bug Fixes
+
+```
+fix(api): resolve login timeout issue
+fix(ui): correct form validation error display
+fix: prevent memory leak in data processing
+```
+
+#### Documentation Updates
+
+```
+docs: update API documentation
+docs(readme): add installation instructions
+```
+
+#### Refactoring
+
+```
+refactor(auth): simplify token validation logic
+refactor: extract common utility functions
+```
+
+#### Testing
+
+```
+test(auth): add unit tests for login API
+test: improve test coverage for user service
+```
+
+#### Build and Configuration
+
+```
+chore: update dependencies to latest versions
+chore(config): update TypeScript configuration
+build: add Docker support for development
+```
+
+#### Performance Improvements
+
+```
+perf(api): optimize database query performance
+perf: reduce bundle size by 20%
+```
+
+#### CI/CD
+
+```
+ci: add automated testing workflow
+ci: update deployment configuration
+```
+
+## Notes
+
+### General Notes
+
+- All git commands must include the `--no-pager` parameter for AI to correctly read output
+- Avoid using `git commit -a` to directly commit all changes; must first use `git add` to explicitly select files to commit
+- Must check `git --no-pager diff` before committing to ensure change content is correct
+- To understand previous commit content or confirm message format, use `git --no-pager log --oneline -5` to view recent records, adjust number as needed
+
+### Conventional Commits Notes
+
+- Must use specified type categories, cannot create custom ones
+- Scope should be concise and clear, reflecting actual program modules or functional scope
+- Description uses present tense verbs, avoid past tense
+- For breaking changes, add `!` before description, e.g., `feat!: remove deprecated API`
+- Maintain consistency, use same type and scope for similar types of changes
+
+### Multiple Commit Strategy Notes
+
+- **AI must analyze first**: Before executing `git add`, AI must first analyze change content and determine if multiple commits are needed
+- **Stop and wait for confirmation**: If AI suggests multiple commits, must stop execution and wait for user confirmation, cannot decide to continue independently
+- **Clear suggestion format**: Multiple commit suggestions must include file list and suggested message for each commit
+- **Logical grouping**: Each commit should represent a complete logical change, avoid putting unrelated modifications in the same commit
+- **Execute in order**: Multiple commits should be executed in logical order, e.g., commit basic configuration first, then feature changes
+- **Independence**: Each commit should be independently functional, should not depend on subsequent commits to work properly
