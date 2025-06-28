@@ -1,4 +1,6 @@
-# AI Development Methodology for Cursor
+# Cursor TDD Rules
+
+[中文版本 / Chinese Version](#cursor-tdd-規則)
 
 A comprehensive set of Cursor rules implementing a three-step AI-driven development methodology, enhanced with Gherkin syntax for acceptance criteria and Test-Driven Development (TDD) practices.
 
@@ -71,7 +73,7 @@ Finally, use `@process-task-list` to iteratively complete each task. The process
 
 ---
 
-# AI 開發方法論 for Cursor
+# Cursor TDD 規則
 
 一套完整的 Cursor 規則集，實現三步驟 AI 驅動開發方法論，並增強了 Gherkin 語法驗收條件和測試驅動開發 (TDD) 實踐。
 
