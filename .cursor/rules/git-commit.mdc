@@ -12,29 +12,14 @@ This document outlines the complete workflow and message format specifications f
 
 Before committing, follow these steps:
 
-1. **Check Status**: View current file changes
+1. **Review Current State**: Check status, differences, and history in one command
 
    ```bash
-   git status
+   # Combined command for efficiency - check status, differences, and recent history
+   export GIT_PAGER=cat && git status && echo "=== CHANGES ===" && git diff && echo "=== RECENT COMMITS ===" && git log --oneline -5
    ```
 
-2. **Review Differences**: Confirm specific change content
-
-   ```bash
-   git --no-pager diff
-   ```
-
-3. **View History** (if needed): Check previous commit records
-
-   ```bash
-   # Default: view last 5 commits
-   git --no-pager log --oneline -5
-
-   # Or adjust number as needed
-   git --no-pager log --oneline -3
-   ```
-
-4. **Analyze Changes and Suggest Commit Strategy**: Based on the degree of file changes, decide whether to split into multiple commits
+2. **Analyze Changes and Suggest Commit Strategy**: Based on the degree of file changes, decide whether to split into multiple commits
 
    **Analysis Criteria**:
 
@@ -74,25 +59,20 @@ Before committing, follow these steps:
    Please confirm whether to proceed with this suggestion, or tell me your adjustments.
    ```
 
-5. **Add Files**: Add files to be committed to the staging area
+3. **Add Files**: Add files to staging area and confirm
 
    ```bash
-   # Add specific files
-   git add filename
+   # For specific files
+   git add filename && git status
 
-   # Or add all changed files (only when confirmed as single commit)
-   git add .
+   # For all changed files (only when confirmed as single commit)
+   git add . && git status
    ```
 
-6. **Confirm Again**: Check staging area content
+4. **Commit and Verify**: Use Conventional Commits format for committing and verify result
 
    ```bash
-   git status
-   ```
-
-7. **Commit Changes**: Use Conventional Commits format for committing
-   ```bash
-   git commit -m "type(scope): description"
+   git commit -m "type(scope): description" && git status && git log --oneline -3
    ```
 
 ### Complete Example Workflow
@@ -100,47 +80,30 @@ Before committing, follow these steps:
 #### Single Commit Workflow
 
 ```bash
-# 1. Check status
-git status
+# 1. Review current state (combined command)
+export GIT_PAGER=cat && git status && echo "=== CHANGES ===" && git diff && echo "=== RECENT COMMITS ===" && git log --oneline -5
 
-# 2. Review changes
-git --no-pager diff
+# 2. Analyze changes (AI judges as single commit)
 
-# 3. View history (if needed)
-git --no-pager log --oneline -5
+# 3. Add files and confirm staging
+git add services/auth/auth.api.ts && git status
 
-# 4. Analyze changes (AI judges as single commit)
-
-# 5. Add files
-git add services/auth/auth.api.ts
-
-# 6. Confirm staging area
-git status
-
-# 7. Commit
-git commit -m "feat(auth): add user authentication API"
-
-# 8. Confirm commit success (optional)
-git status
+# 4. Commit and verify
+git commit -m "feat(auth): add user authentication API" && git status && git log --oneline -3
 ```
 
 #### Multiple Commits Workflow
 
 ```bash
-# 1-4. Same as above, AI analyzes and suggests multiple commits then stops waiting for confirmation
+# 1-2. Same as above, AI analyzes and suggests multiple commits then stops waiting for confirmation
 
 # After user confirmation, execute first commit:
-git add services/auth/auth.api.ts services/auth/auth.types.ts
-git status
-git commit -m "feat(auth): add user authentication API"
+git add services/auth/auth.api.ts services/auth/auth.types.ts && git status
+git commit -m "feat(auth): add user authentication API" && git status && git log --oneline -2
 
 # Execute second commit:
-git add package.json tsconfig.json
-git status
-git commit -m "chore: update TypeScript configuration"
-
-# Confirm all commits successful
-git status
+git add package.json tsconfig.json && git status
+git commit -m "chore: update TypeScript configuration" && git status && git log --oneline -2
 ```
 
 ## Commit Message Format Specifications
@@ -243,10 +206,10 @@ ci: update deployment configuration
 
 ### General Notes
 
-- All git commands must include the `--no-pager` parameter for AI to correctly read output
+- Use `export GIT_PAGER=cat` at the beginning of git command sequences to ensure output is displayed without pagination
 - Avoid using `git commit -a` to directly commit all changes; must first use `git add` to explicitly select files to commit
-- Must check `git --no-pager diff` before committing to ensure change content is correct
-- To understand previous commit content or confirm message format, use `git --no-pager log --oneline -5` to view recent records, adjust number as needed
+- Must check `git diff` before committing to ensure change content is correct
+- To understand previous commit content or confirm message format, use `git log --oneline -5` to view recent records, adjust number as needed
 
 ### Conventional Commits Notes
 
